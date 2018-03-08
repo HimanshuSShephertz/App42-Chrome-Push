@@ -1,4 +1,4 @@
-# Getting Started with Chrome Push Notification
+# Getting Started with Web Push Notification
 
 * [Create and Configure Google Project](http://api.shephertz.com/tutorial/Push-Notification-Android/?index=pn-android)
 * [Basic Steps to configure this project for Notification](https://github.com/HimanshuSShephertz/SocialInfo/wiki/Basic-Steps-to-configure-this-project-for-Notification)
