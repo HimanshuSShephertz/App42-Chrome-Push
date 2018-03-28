@@ -26,12 +26,17 @@ var FETCH_ENDPOINT = "https://api.shephertz.com/cloud/1.0/storage/getAllNoticati
 			var jsonOBJECT = json.app42.response.notification.messages
 				for(var i=0;i< jsonOBJECT.length;i++){
 					var jsonPayload = jsonOBJECT[i];
-					messagePayload = {
-						body: jsonPayload.message,
-						icon:iconURL
-					}
-					parseJSON(jsonOBJECT,i,messagePayload);
-					return self.registration.showNotification(title, messagePayload);
+					var messagePayload = {};
+					messagePayload.body = jsonPayload.message;
+					messagePayload.icon = iconURL;
+					parseJSON(jsonOBJECT, i, messagePayload, function (dataUrl, a1, a2) {
+						var messagePayloadDataUrl = {};
+						messagePayloadDataUrl.url = dataUrl;
+						messagePayloadDataUrl.actionOneUrl = a1;
+						messagePayloadDataUrl.actionTwoUrl = a2;
+						messagePayload.data = messagePayloadDataUrl;
+						return self.registration.showNotification(title, messagePayload);
+					});
 				}
             });
         });
@@ -43,7 +48,7 @@ self.addEventListener('message', function(event) {
   event.ports[0].postMessage({'test': 'This is my response.'});
 });
 
-function parseJSON(jsonOBJECT,i,messagePayload){
+function parseJSON(jsonOBJECT,i,messagePayload, onDone){
 	title = 'OmniChannel Enterprise Platform | ShepHertz';
 	iconURL = "images/logo.png"
 	CLICK_URL = "https://apphq.shephertz.com";
@@ -176,6 +181,7 @@ function parseJSON(jsonOBJECT,i,messagePayload){
 			CLICK_URL = jsonPayload.url
 		}	
 	}
+	onDone(CLICK_URL, actionOne, actionTwo);
 }
 
 function endpointCorrection(pushSubscription) {
@@ -194,7 +200,9 @@ self.addEventListener('notificationclick', function(event) {
    if (Notification.prototype.hasOwnProperty('data')) {
 		var url = event.notification.body;
 	}
-	var clickURL = event.target.CLICK_URL
+	var clickURL = event.notification.data.url;
+	actionOne = event.notification.data.actionOneUrl;
+	actionTwo = event.notification.data.actionTwoUrl;
 	if (event.action === actionOne) {  
 		clickURL = actionOne;
 	}if (event.action === actionTwo) {  
