@@ -29,13 +29,13 @@ var FETCH_ENDPOINT = "https://api.shephertz.com/cloud/1.0/storage/getAllNoticati
 					var messagePayload = {};
 					messagePayload.body = jsonPayload.message;
 					messagePayload.icon = iconURL;
-					parseJSON(jsonOBJECT, i, messagePayload, function (dataUrl, a1, a2) {
+					parseJSON(jsonOBJECT, i, messagePayload, function (dataUrl, a1, a2, returnMsgPayload) {
 						var messagePayloadDataUrl = {};
 						messagePayloadDataUrl.url = dataUrl;
 						messagePayloadDataUrl.actionOneUrl = a1;
 						messagePayloadDataUrl.actionTwoUrl = a2;
-						messagePayload.data = messagePayloadDataUrl;
-						return self.registration.showNotification(title, messagePayload);
+						returnMsgPayload.data = messagePayloadDataUrl;
+						return self.registration.showNotification(title, returnMsgPayload);
 					});
 				}
             });
@@ -50,7 +50,6 @@ self.addEventListener('message', function(event) {
 
 function parseJSON(jsonOBJECT,i,messagePayload, onDone){
 	title = 'OmniChannel Enterprise Platform | ShepHertz';
-	iconURL = "images/logo.png"
 	CLICK_URL = "https://apphq.shephertz.com";
 	actionOne = null;
 	actionTwo = null;
@@ -168,20 +167,12 @@ function parseJSON(jsonOBJECT,i,messagePayload, onDone){
 				}
 				actions.push(actionT)
 			}
-		}							
-		messagePayload.actions = actions
-		messagePayload.icon = iconURL
-	}
-	else{
-		var messagePayload = {
-			body: jsonPayload.message,
-			icon:iconURL
 		}
-		if(jsonPayload.url){
-			CLICK_URL = jsonPayload.url
-		}	
+		if(actions.length > 0){
+			messagePayload.actions = actions
+		}
 	}
-	onDone(CLICK_URL, actionOne, actionTwo);
+	onDone(CLICK_URL, actionOne, actionTwo, messagePayload);
 }
 
 function endpointCorrection(pushSubscription) {
