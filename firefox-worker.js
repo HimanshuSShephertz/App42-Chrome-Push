@@ -37,9 +37,7 @@ self.addEventListener('push', function (event) {
 						messagePayloadDataUrl.actionTwoUrl = a2;
 						messagePayloadDataUrl.app42CampaignName = app42CampaignName;
 						returnMsgPayload.data = messagePayloadDataUrl;
-						trackWebPushDevelered(app42CampaignName, function () {
-							return self.registration.showNotification(title, returnMsgPayload);
-						});
+						return self.registration.showNotification(title, returnMsgPayload);
 					});
 				}
 			});
@@ -222,35 +220,6 @@ self.addEventListener('notificationclick', function (event) {
 	}));
 });
 
-function trackWebPushDevelered(campaignName, callback) {
-	var app42_campaignName = campaignName;
-	var app42_source = "";
-	var app42_message_id = "";
-	var app42_campId = 0;
-	var requestHeaders = {};
-	requestHeaders["Content-Type"] = "application/json";
-	requestHeaders["Accept"] = "application/json";
-	requestHeaders["ApiKey"] = apiKey;
-	var trackPushDeleveredUrl = SERVER_ENDPOINT+ "push/trackWebPushDelivered";
-	fetch(trackPushDeleveredUrl, {
-		headers: requestHeaders,
-		method: 'POST',
-		body: '{"app42":{"push":{"app42_campaignName":"' + app42_campaignName + '","app42_source":"' + app42_source + '","app42_message_id":"' + app42_message_id + '","app42_campId":"' + app42_campId + '"}}}'
-	})
-		.then(function (response) {
-			if (!response.ok) {
-				//console.log('Response not OK : ', response.statusText);
-			} else {
-				//console.log('Response is OK : ', response);
-			}
-			// Do stuff with the response
-			callback();
-		})
-		.catch(function (error) {
-			console.log('Looks like there was a problem: \n', error);
-			callback();
-		});
-}
 
 function trackWebPushOpened(campaignName) {
 	var app42_campaignName = campaignName;
