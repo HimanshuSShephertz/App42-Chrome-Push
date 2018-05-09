@@ -1,7 +1,7 @@
-var apiKey = "API_KEY"
+var apiKey = "12daacee60bd1f04e46a71b852f601bdfaa49fe8047a8322e3a3daf4d9b244f7";
 var CLICK_URL, title, actionOne, actionTwo;
-var iconURL = "images/logo.png";
-var SERVER_ENDPOINT = "https://api.shephertz.com/cloud/1.0/";
+var iconURL = "https://lntrealty.azureedge.net/website-data/2018/04/LntRealty-Logo-200x200.jpg";
+var SERVER_ENDPOINT = "https://in-api.shephertz.com/cloud/1.0/";
 self.addEventListener('install', function (event) {
 	self.skipWaiting();
 });
@@ -36,6 +36,7 @@ self.addEventListener('push', function (event) {
 						messagePayloadDataUrl.actionOneUrl = a1;
 						messagePayloadDataUrl.actionTwoUrl = a2;
 						messagePayloadDataUrl.app42CampaignName = app42CampaignName;
+						messagePayloadDataUrl.deviceToken = encodedString;
 						returnMsgPayload.data = messagePayloadDataUrl;
 						return self.registration.showNotification(title, returnMsgPayload);
 					});
@@ -51,8 +52,8 @@ self.addEventListener('message', function (event) {
 });
 
 function parseJSON(jsonOBJECT, i, messagePayload, onDone) {
-	title = 'OmniChannel Enterprise Platform | ShepHertz';
-	CLICK_URL = "https://apphq.shephertz.com";
+	title = 'Real Estate Developers | L&T Realty';
+	CLICK_URL = "https://www.lntrealty.com/";
 	actionOne = null;
 	actionTwo = null;
 	var actions = new Array();
@@ -194,7 +195,8 @@ function endpointCorrection(pushSubscription) {
 }
 self.addEventListener('notificationclick', function (event) {
 	var campaignName = event.notification.data.app42CampaignName;
-	trackWebPushOpened(campaignName);
+	var deviceToken = event.notification.data.deviceToken;
+	trackWebPushOpened(campaignName, deviceToken);
 	if (Notification.prototype.hasOwnProperty('data')) {
 		var url = event.notification.body;
 	}
@@ -220,8 +222,7 @@ self.addEventListener('notificationclick', function (event) {
 	}));
 });
 
-
-function trackWebPushOpened(campaignName) {
+function trackWebPushOpened(campaignName, deviceToken) {
 	var app42_campaignName = campaignName;
 	var app42_source = "";
 	var app42_message_id = "";
@@ -234,7 +235,7 @@ function trackWebPushOpened(campaignName) {
 	fetch(trackPushOpenUrl, {
 		headers: requestHeaders,
 		method: 'POST',
-		body: '{"app42":{"push":{"app42_campaignName":"' + app42_campaignName + '","app42_source":"' + app42_source + '","app42_message_id":"' + app42_message_id + '","app42_campId":"' + app42_campId + '"}}}'
+		body: '{"app42_campaignName":"' + app42_campaignName + '","app42_source":"' + app42_source + '","app42_message_id":"' + app42_message_id + '","app42_campId":"' + app42_campId + '","device_id":"' + deviceToken + '"}'
 	})
 		.then(function (response) {
 			if (!response.ok) {
@@ -243,7 +244,6 @@ function trackWebPushOpened(campaignName) {
 				//console.log('Response is OK : ', response);
 			}
 			// Do stuff with the response
-
 		})
 		.catch(function (error) {
 			console.log('Looks like there was a problem: \n', error);

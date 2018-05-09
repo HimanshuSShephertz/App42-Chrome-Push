@@ -1,6 +1,6 @@
 'use strict';
-var API_KEY = "API_KEY"
-var SECERT_KEY = "SECRET_KEY"
+var API_KEY = "12daacee60bd1f04e46a71b852f601bdfaa49fe8047a8322e3a3daf4d9b244f7";
+var SECERT_KEY = "6d401bd0324f31c9d45cdc25e70f38279940da51fff13cb8f3c7fb422db6600d";
 if ('serviceWorker' in navigator) {
   var type = jQuery.browser.name;
   var jsAddress = "chrome-worker.js"
@@ -38,6 +38,7 @@ if ('serviceWorker' in navigator) {
     });
   })
    .catch(function(err) {
+		console.log('Service Worker registration failed: ', err);
     console.log('Service Worker registration failed: ');
   });
 }
